@@ -1788,6 +1788,7 @@ body,
         flex-wrap: wrap;
         justify-content: center;
         gap: 16px;
+        text-align: center;
     }
 
     .order-header p:nth-of-type(2)::before {
