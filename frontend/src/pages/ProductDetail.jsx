@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { addItem, removeItem, updateSingleItem } from '../utils/cartSlice'
 import Counter from '../components/Counter'
 import toast from 'react-hot-toast'
+import { ENDPOINTS } from '../utils/config'
 
 function ProductDetail() {
   useEffect(() => {
@@ -26,7 +27,7 @@ function ProductDetail() {
   useEffect(() => {
     async function fetchProductDetails() {
       try {
-        const resp = await fetch(`http://localhost:5000/api/product/${id}`)
+        const resp = await fetch(`${ENDPOINTS.ONE_PRODUCT}${id}`)
         const json = await resp.json()
         // if API fails, fallback to NotFound component (/404) as API error does not fall under React Router error boundary
         if (!resp.ok) navigate("/404", { replace: true, state: { from: window.location.pathname, status: 404, message: `Product with id ${id} not found` } })
@@ -55,7 +56,7 @@ function ProductDetail() {
       return
     }
     try {
-      const res = await fetch("http://localhost:5000/api/cart", {
+      const res = await fetch(ENDPOINTS.CART, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -81,7 +82,7 @@ function ProductDetail() {
     const confirmRemove = window.confirm("You want to remove the item from cart?")
     if (!confirmRemove) return
     try {
-      await fetch(`http://localhost:5000/api/cart/${cartItem._id}`, {
+      await fetch(`${ENDPOINTS.CART}${cartItem._id}`, {
         method: "DELETE",
         headers: {
           "Content-type": "application/json",
@@ -102,7 +103,7 @@ function ProductDetail() {
       handleRemoveFromCart()
     } else {
       try {
-        const res = await fetch(`http://localhost:5000/api/cart/${cartItem._id}`, {
+        const res = await fetch(`${ENDPOINTS.CART}${cartItem._id}`, {
           method: "PUT",
           headers: {
             "Content-type": "application/json",
@@ -122,7 +123,7 @@ function ProductDetail() {
   // disptaching action to increase number of quantity
   async function handleIncreaseQuantity() {
     try {
-      const res = await fetch(`http://localhost:5000/api/cart/${cartItem._id}`, {
+      const res = await fetch(`${ENDPOINTS.CART}${cartItem._id}`, {
         method: "PUT",
         headers: {
           "Content-type": "application/json",

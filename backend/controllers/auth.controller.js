@@ -24,7 +24,7 @@ export async function registerUser(req, res) {
             email: email
         })
         // Generate JWT
-        const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "60m" })
+        const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET)
         // Send response with token and user info
         res.status(201).json({
             message: `User ${user.name} registered successfully.`,
@@ -56,7 +56,7 @@ export async function loginUser(req, res) {
         const userObj = user.toObject()
         delete userObj.password
 
-        const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "60m" })
+        const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET)
         return res.status(200).json({ isMatch: isMatch, message: "User authorized", token: token, user: userObj })
     } catch (error) {
         return res.status(500).json({ message: "Server error while logging in.", error: error.message })

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { useSelector } from "react-redux"
 import { Link, Navigate } from "react-router-dom"
+import { ENDPOINTS } from "../utils/config"
 
 function ThankYou() {
   const [isOrderPlaced, setIsOrderPlaced] = useState(() => {
@@ -15,7 +16,7 @@ function ThankYou() {
   useEffect(() => {
     async function fetchOrderDetail() {
       try {
-        const res = await fetch("http://localhost:5000/api/order/latest", {
+        const res = await fetch(ENDPOINTS.ORDER_LATEST, {
           method: "GET",
           headers: {
             "Content-type": "application/json",

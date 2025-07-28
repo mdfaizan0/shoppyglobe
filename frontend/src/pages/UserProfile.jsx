@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, logout } from "../utils/userSlice";
 import toast from "react-hot-toast";
+import { ENDPOINTS } from "../utils/config";
 
 function UserProfile() {
     const [isLoggedIn, setIsLoggedIn] = useState()
@@ -46,7 +47,7 @@ function UserProfile() {
     useEffect(() => {
         async function fetchOrderHistory() {
             try {
-                const res = await fetch("http://localhost:5000/api/order/history", {
+                const res = await fetch(ENDPOINTS.ORDER_HISTORY, {
                     method: "GET",
                     headers: {
                         "Content-type": "application/json",

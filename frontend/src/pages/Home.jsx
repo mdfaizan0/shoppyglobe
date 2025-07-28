@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import useFetchProducts from "../utils/useFetchProducts";
 import { Link } from "react-router-dom";
+import { ENDPOINTS } from "../utils/config";
 
 function Home() {
   useEffect(() => {
@@ -16,7 +17,7 @@ function Home() {
 
   // setting currentIndex state and fetching list of products
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { data, err, loading } = useFetchProducts("http://localhost:5000/api/products");
+  const { data, err, loading } = useFetchProducts(ENDPOINTS.ALL_PRODUCTS);
   // getting array of topRated products
   const topRated = data?.products
     ?.slice()

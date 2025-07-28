@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { setToken } from '../utils/userSlice'
 import toast from 'react-hot-toast'
+import { ENDPOINTS } from '../utils/config'
 
 
 function Login() {
@@ -30,7 +31,7 @@ function Login() {
         }
 
         try {
-            const res = await fetch("http://localhost:5000/api/auth/login", {
+            const res = await fetch(ENDPOINTS.LOGIN, {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json"

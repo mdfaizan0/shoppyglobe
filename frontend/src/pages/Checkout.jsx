@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { clearCart } from '../utils/cartSlice'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
+import { ENDPOINTS } from '../utils/config'
 
 function Checkout() {
   useEffect(() => {
@@ -31,7 +32,7 @@ function Checkout() {
   async function handleConfirmOrder() {
     const orderNo = Math.floor(100000 + Math.random() * 900000)
     try {
-      const res = await fetch("http://localhost:5000/api/order", {
+      const res = await fetch(ENDPOINTS.ORDER, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -52,7 +53,7 @@ function Checkout() {
   async function handleClearCart() {
     sessionStorage.setItem("orderPlaced", "true")
     try {
-      await fetch("http://localhost:5000/api/cartclear", {
+      await fetch(ENDPOINTS.CLEAR_CART, {
         method: "DELETE",
         headers: {
           "Content-type": "application/json",

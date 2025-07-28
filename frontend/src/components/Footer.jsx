@@ -16,15 +16,15 @@ function Footer() {
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-section brand">
-          <img src={logo} alt="logo" className="footer-logo" loading="lazy"/>
+          <img src={logo} alt="logo" className="footer-logo" loading="lazy" />
           <p className="footer-desc">
             ShoppyGlobe isn't just a marketplace — it's a carefully curated space where value meets style. Whether you're browsing, buying, or building your wishlist, our goal is simple: make every click worth it.
           </p>
           <ul className="social-links">
-            <li><a href="#"><FontAwesomeIcon icon={faTwitter} inverse /></a></li>
-            <li><a href="#"><FontAwesomeIcon icon={faFacebook} inverse /></a></li>
-            <li><a href="#"><FontAwesomeIcon icon={faInstagram} inverse /></a></li>
-            <li><a href="#"><FontAwesomeIcon icon={faGithub} inverse /></a></li>
+            <li><a href="https://x.com/"><FontAwesomeIcon icon={faTwitter} inverse /></a></li>
+            <li><a href="https://www.facebook.com/"><FontAwesomeIcon icon={faFacebook} inverse /></a></li>
+            <li><a href="https://www.instagram.com/"><FontAwesomeIcon icon={faInstagram} inverse /></a></li>
+            <li><a href="https://github.com/"><FontAwesomeIcon icon={faGithub} inverse /></a></li>
           </ul>
         </div>
 

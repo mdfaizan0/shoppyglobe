@@ -4,6 +4,7 @@ import { Link, Navigate } from 'react-router-dom'
 import { clearCart, setCart } from '../utils/cartSlice'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
+import { ENDPOINTS } from '../utils/config'
 
 function Cart() {
   useEffect(() => {
@@ -22,7 +23,7 @@ function Cart() {
   async function handleClearCart() {
     if (window.confirm("Are you sure you want to remove all items?")) {
       try {
-        const res = await fetch("http://localhost:5000/api/cartclear", {
+        const res = await fetch(ENDPOINTS.CLEAR_CART, {
           method: "DELETE",
           headers: {
             "Content-type": "application/json",
@@ -45,7 +46,7 @@ function Cart() {
   }
   useEffect(() => {
     async function fetchCartItems() {
-      const res = await fetch("http://localhost:5000/api/cart", {
+      const res = await fetch(ENDPOINTS.CART, {
         method: "GET",
         headers: {
           "Content-type": "application/json",

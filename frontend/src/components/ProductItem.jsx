@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom"
 import Counter from "./Counter"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
+import { ENDPOINTS } from "../utils/config"
 
 function ProductItem({ title, thumbnail, price, warranty, id, rating }) {
     // declaring addedToCart to check if addedtocart, if yes, show go to cart and update redux state
@@ -22,7 +23,7 @@ function ProductItem({ title, thumbnail, price, warranty, id, rating }) {
             return
         }
         try {
-            const res = await fetch("http://localhost:5000/api/cart", {
+            const res = await fetch(ENDPOINTS.CART, {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json",
@@ -49,7 +50,7 @@ function ProductItem({ title, thumbnail, price, warranty, id, rating }) {
         const confirmRemove = window.confirm("You want to remove the item from cart?")
         if (!confirmRemove) return
         try {
-            await fetch(`http://localhost:5000/api/cart/${cartItem._id}`, {
+            await fetch(`${ENDPOINTS.CART}${cartItem._id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-type": "application/json",
@@ -69,7 +70,7 @@ function ProductItem({ title, thumbnail, price, warranty, id, rating }) {
             handleRemoveFromCart()
         } else {
             try {
-                const res = await fetch(`http://localhost:5000/api/cart/${cartItem._id}`, {
+                const res = await fetch(`${ENDPOINTS.CART}${cartItem._id}`, {
                     method: "PUT",
                     headers: {
                         "Content-type": "application/json",
@@ -88,7 +89,7 @@ function ProductItem({ title, thumbnail, price, warranty, id, rating }) {
 
     async function handleIncreaseQuantity() {
         try {
-            const res = await fetch(`http://localhost:5000/api/cart/${cartItem._id}`, {
+            const res = await fetch(`${ENDPOINTS.CART}${cartItem._id}`, {
                 method: "PUT",
                 headers: {
                     "Content-type": "application/json",

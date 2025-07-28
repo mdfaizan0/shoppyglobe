@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { Navigate, useNavigate } from "react-router-dom"
 import { setToken } from "../utils/userSlice"
 import toast from "react-hot-toast"
+import { ENDPOINTS } from "../utils/config"
 
 function Signup() {
   useEffect(() => {
@@ -32,7 +33,7 @@ function Signup() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
+      const res = await fetch(ENDPOINTS.REGISTER, {
         method: "POST",
         headers: {
           "Content-type": "application/json"

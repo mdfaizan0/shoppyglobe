@@ -2,8 +2,8 @@ import express from "express"
 import dotenv from "dotenv"
 import connectDB from "./config/db.js"
 import cors from "cors"
-import { authRoutes } from "./routes/auth.routes.js"
-import { cartRoutes } from "./routes/cart.routes.js"
+import { authRoutes } from "./routes/auth.Routes.js"
+import { cartRoutes } from "./routes/cart.Routes.js"
 import { orderRoutes } from "./routes/order.routes.js"
 import { productRoutes } from "./routes/product.routes.js"
 import { userRoutes } from "./routes/user.routes.js"
@@ -13,11 +13,15 @@ connectDB()
 
 const app = express()
 
-app.use(cors())
+app.use(cors({
+  origin: process.env.FRONTEND_ORIGIN,
+  credentials: true
+}))
+
 app.use(express.json())
 
 app.get("/", (req, res) => {
-    res.send("App is running")
+    res.send("ShoppyGlobe backend is live!")
 })
 
 const PORT = process.env.PORT || 5000;

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import ProductItem from '../components/ProductItem'
 import useFetchProducts from '../utils/useFetchProducts'
 import { useSelector } from 'react-redux'
+import { ENDPOINTS } from '../utils/config'
 
 function ProductList() {
   useEffect(() => {
@@ -14,7 +15,7 @@ function ProductList() {
   const [lowStock, setLowStock] = useState(false)
   const [sortOption, setSortOption] = useState("")
   // Called custom hooks for API data/err/loading
-  const { data, err, loading } = useFetchProducts("http://localhost:5000/api/products")
+  const { data, err, loading } = useFetchProducts(ENDPOINTS.ALL_PRODUCTS)
   // Listing categories and used Set to keep only unique inputs
   const categories = [...new Set(data?.products?.map(item => item.category))]
   // Accessing search query from search state

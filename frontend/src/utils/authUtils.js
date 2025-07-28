@@ -1,8 +1,10 @@
+import { ENDPOINTS } from "./config";
+
 export async function getProfile(token) {
     if (!token) return null;
 
     try {
-        const res = await fetch("http://localhost:5000/api/auth/profile", {
+        const res = await fetch(ENDPOINTS.USER_PROFILE, {
             method: "GET",
             headers: {
                 "Content-type": "application/json",

@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { removeItem, updateSingleItem } from "../utils/cartSlice"
 import Counter from "./Counter"
 import toast from "react-hot-toast"
+import { ENDPOINTS } from "../utils/config"
 
 function CartItem({ item }) {
   const dispatch = useDispatch()
@@ -12,7 +13,7 @@ function CartItem({ item }) {
     const confirmRemove = window.confirm("You want to remove the item from cart?")
     if (!confirmRemove) return
     try {
-      await fetch(`http://localhost:5000/api/cart/${item._id}`, {
+      await fetch(`${ENDPOINTS.CART}${item._id}`, {
         method: "DELETE",
         headers: {
           "Content-type": "application/json",
@@ -32,7 +33,7 @@ function CartItem({ item }) {
       handleRemoveFromCart()
     } else {
       try {
-        const res = await fetch(`http://localhost:5000/api/cart/${item._id}`, {
+        const res = await fetch(`${ENDPOINTS.CART}${item._id}`, {
           method: "PUT",
           headers: {
             "Content-type": "application/json",
@@ -51,7 +52,7 @@ function CartItem({ item }) {
 
   async function handleIncreaseQuantity() {
     try {
-      const res = await fetch(`http://localhost:5000/api/cart/${item._id}`, {
+      const res = await fetch(`${ENDPOINTS.CART}${item._id}`, {
         method: "PUT",
         headers: {
           "Content-type": "application/json",
