@@ -1,16 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ProductItem from '../components/ProductItem'
 import useFetchProducts from '../utils/useFetchProducts'
 import { useSelector } from 'react-redux'
 
 function ProductList() {
+  useEffect(() => {
+    document.title = `Shop | ShoppyGlobe`
+  }, [])
+
   // Defined states
   const [categorySelected, setCategorySelected] = useState("")
   const [inStock, setInStock] = useState(false)
   const [lowStock, setLowStock] = useState(false)
   const [sortOption, setSortOption] = useState("")
   // Called custom hooks for API data/err/loading
-  const { data, err, loading } = useFetchProducts("https://dummyjson.com/products?limit=60")
+  const { data, err, loading } = useFetchProducts("http://localhost:5000/api/products")
   // Listing categories and used Set to keep only unique inputs
   const categories = [...new Set(data?.products?.map(item => item.category))]
   // Accessing search query from search state
@@ -116,7 +120,7 @@ function ProductList() {
         </select>
       </div>
       <div className="parent-product-filters">
-        <aside className="product-filters" style={data? {display: "block"} : {display: "none"}}>
+        <aside className="product-filters" style={data ? { display: "block" } : { display: "none" }}>
           <h1>Filters</h1>
           <div className="filter-container">
             <div className="category-filter">
@@ -158,6 +162,7 @@ function ProductList() {
                   thumbnail={item.thumbnail}
                   warranty={item.warrantyInformation}
                   id={item.id}
+                  rating={item.rating}
                 />
               ))}
             </div>

@@ -1,4 +1,10 @@
+import { useEffect } from "react";
+
 function About() {
+  useEffect(() => {
+    document.title = `About | ShoppyGlobe`
+  }, [])
+
   // rendering
   return (
     <div className="about-page">

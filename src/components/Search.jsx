@@ -32,7 +32,7 @@ function Search({ showSearch, setShowSearch }) {
 
     return (
         <div className="search-component">
-            <input type="text" placeholder="Search for products" onChange={handleInputChange} />
+            <input type="text" placeholder="Search for products, brands, categories" onChange={handleInputChange} />
             <button onClick={handleRemoveSearch} className="search-cross"><FontAwesomeIcon icon={faXmark} /></button>
         </div>
     )

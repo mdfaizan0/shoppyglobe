@@ -1,14 +1,21 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { clearCart } from '../utils/cartSlice'
 import { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 
 function Checkout() {
   useEffect(() => {
     window.scroll(0, 0)
   }, [])
+
+  useEffect(() => {
+    document.title = `Checkout | ShoppyGlobe`
+  }, [])
+
   // declaring dispatch and getting existing cart items from redux state
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const cartItems = useSelector(store => store.cart.items)
   // state to check if payment option have been clicked even once
   const [payChecked, setPayChecked] = useState(0)
@@ -19,11 +26,46 @@ function Checkout() {
   const delivery = 20
   // deriving finalTotal
   const finalTotal = subtotal + taxes + delivery
+  const token = useSelector(state => state.user.token)
+
+  async function handleConfirmOrder() {
+    const orderNo = Math.floor(100000 + Math.random() * 900000)
+    try {
+      const res = await fetch("http://localhost:5000/api/order", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          "authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ orderNo })
+      })
+      const data = await res.json()
+      toast.success(data.message, { icon: "🎉" })
+      handleClearCart()
+    } catch (error) {
+      toast.error("Failed to create the order")
+      console.error("Failed to create the order", error)
+    }
+  }
 
   // removing items from cart and setting orderPlaced to true to sessionStorage to show ThankYou page only true.
-  function handleConfirmOrder() {
-    dispatch(clearCart())
+  async function handleClearCart() {
     sessionStorage.setItem("orderPlaced", "true")
+    try {
+      await fetch("http://localhost:5000/api/cartclear", {
+        method: "DELETE",
+        headers: {
+          "Content-type": "application/json",
+          "authorization": `Bearer ${token}`
+        }
+      })
+    } catch (error) {
+      toast.error("Error while clearing cart")
+      console.error("Error while clearing cart:", error)
+    }
+
+    dispatch(clearCart())
+    navigate("/thank-you")
   }
 
   // increasing payChecked state
@@ -36,14 +78,14 @@ function Checkout() {
       <div className="checkout-nav-links">
         <Link to="/products/all">Back to Shop</Link> | <Link to="/cart">Back to Cart</Link>
       </div>
-      {cartItems.length === 0 ? <h2 className="cart-empty-msg">🛒 Cart is Empty, please add an item to!</h2> : (
+      {cartItems.length === 0 ? <h2 className="cart-empty-msg">📩 Please Proceed to Checkout again from the cart!</h2> : (
         <>
           <h2 className="checkout-title">Review Your Order</h2>
           <div className="checkout-item-list">
             {cartItems.map(item => (
-              <div className="checkout-item" key={item.id}>
+              <div className="checkout-item" key={item.productId}>
                 <div className="checkout-item-img">
-                  <img src={item.thumbnail} alt={item.title} />
+                  <img src={item.thumbnail} alt={item.title} loading="lazy" />
                 </div>
                 <div className="checkout-item-info">
                   <h3>{item.title}</h3>
@@ -60,17 +102,17 @@ function Checkout() {
               <div className="payment-upi payment">
                 <input type="radio" name="payment_method" id="upi" />
                 <label htmlFor="upi">
-                  <img src="https://img.icons8.com/?size=100&id=5RcHTSNy4fbL&format=png&color=000000" alt="bhim" />
-                  <img src="https://img.icons8.com/?size=100&id=XYVoikUs9vba&format=png&color=000000" alt="gpay" />
-                  <img src="https://img.icons8.com/?size=100&id=OYtBxIlJwMGA&format=png&color=000000" alt="phonepe" />
+                  <img src="https://img.icons8.com/?size=100&id=5RcHTSNy4fbL&format=png&color=000000" alt="bhim" loading="lazy" />
+                  <img src="https://img.icons8.com/?size=100&id=XYVoikUs9vba&format=png&color=000000" alt="gpay" loading="lazy" />
+                  <img src="https://img.icons8.com/?size=100&id=OYtBxIlJwMGA&format=png&color=000000" alt="phonepe" loading="lazy" />
                 </label>
               </div>
               <div className="payment-card payment">
                 <input type="radio" name="payment_method" id="card" />
                 <label htmlFor="card">
-                  <img src="https://img.icons8.com/?size=100&id=9huLL0OVNRPY&format=png&color=000000" alt="visa" />
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="mastercard" />
-                  <img src="https://img.icons8.com/?size=100&id=13607&format=png&color=000000" alt="" />
+                  <img src="https://img.icons8.com/?size=100&id=9huLL0OVNRPY&format=png&color=000000" alt="visa" loading="lazy" />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="mastercard" loading="lazy" />
+                  <img src="https://img.icons8.com/?size=100&id=13607&format=png&color=000000" alt="amex" loading="lazy" />
                 </label>
               </div>
               <div className="payment-cod payment">
@@ -101,9 +143,7 @@ function Checkout() {
             </div>
           </div>
           <div className="confirm-order-btn">
-            <Link to="/thank-you">
-              <button onClick={handleConfirmOrder} disabled={payChecked === 0}>Confirm Order</button>
-            </Link>
+            <button onClick={handleConfirmOrder} disabled={payChecked === 0}>Confirm Order</button>
           </div>
         </>
       )}

@@ -4,8 +4,6 @@ import { createSlice } from "@reduxjs/toolkit";
 // addItem - to add an item from items
 // removeItem - to remove an item from items
 // clearCart - to clear the cart
-// increaseQuantity -  to increase the number of items purchasing
-// decreaseQuantity -  to decrease the number of items purchasing
 const cartSlice = createSlice({
     name: "cart",
     initialState: {
@@ -13,35 +11,35 @@ const cartSlice = createSlice({
     },
     reducers: {
         addItem: (state, action) => {
-            const existingItem = state.items.find(item => item.id === action.payload.id)
+            const incomingItem = action.payload
+            const existingItem = state.items.find(item => item._id === incomingItem._id)
             if (existingItem) {
-                existingItem.quantity += 1
+                existingItem.quantity = incomingItem.quantity
             } else {
-                state.items.push({ ...action.payload, quantity: 1 })
+                state.items.push(incomingItem)
             }
         },
         removeItem: (state, action) => {
-            state.items = state.items.filter(item => item.id !== action.payload);
+            state.items = state.items.filter(item => item._id !== action.payload);
         },
         clearCart: (state) => {
             state.items.length = 0
         },
-        increaseQuantity: (state, action) => {
-            const item = state.items.find(item => item.id === action.payload)
-            if (item) item.quantity += 1
+        setCart: (state, action) => {
+            state.items = action.payload
         },
-        decreaseQuantity: (state, action) => {
-            const item = state.items.find(item => item.id === action.payload)
-            if (item.quantity > 1) {
-                item.quantity -= 1
-            } else {
-                state.items = state.items.filter(item => item.id !== action.payload)
+        updateSingleItem: (state, action) => {
+            const updatedItem = action.payload
+            if (!updatedItem) return
+            const index = state.items.findIndex(item => item._id === updatedItem._id)
+            if (index !== -1) {
+                state.items[index] = updatedItem
             }
         }
     }
 })
 
 // creating and exporting actions
-export const { addItem, removeItem, clearCart, increaseQuantity, decreaseQuantity } = cartSlice.actions
+export const { addItem, removeItem, clearCart, setCart, updateSingleItem } = cartSlice.actions
 
 export default cartSlice.reducer

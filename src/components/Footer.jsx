@@ -16,7 +16,7 @@ function Footer() {
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-section brand">
-          <img src={logo} alt="logo" className="footer-logo" />
+          <img src={logo} alt="logo" className="footer-logo" loading="lazy"/>
           <p className="footer-desc">
             ShoppyGlobe isn't just a marketplace — it's a carefully curated space where value meets style. Whether you're browsing, buying, or building your wishlist, our goal is simple: make every click worth it.
           </p>

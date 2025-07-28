@@ -3,6 +3,10 @@ import useFetchProducts from "../utils/useFetchProducts";
 import { Link } from "react-router-dom";
 
 function Home() {
+  useEffect(() => {
+    document.title = `Home | ShoppyGlobe`
+  }, [])
+
   // array of carousel images
   const slides = [
     "https://img.freepik.com/free-photo/excited-girl-scream-joy-making-fist-pump-holding-shopping-bag-rejoicing-standing-dress-ove_1258-120529.jpg?t=st=1752680918~exp=1752684518~hmac=f4aaa696b9e5b9db7eee53d1fc5caf8b8690fa6ae6f82623f343ee22f29459a7&w=1380",
@@ -12,7 +16,7 @@ function Home() {
 
   // setting currentIndex state and fetching list of products
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { data, err, loading } = useFetchProducts("https://dummyjson.com/products?limit=60");
+  const { data, err, loading } = useFetchProducts("http://localhost:5000/api/products");
   // getting array of topRated products
   const topRated = data?.products
     ?.slice()
@@ -41,7 +45,7 @@ function Home() {
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
           {slides.map((src, i) => (
-            <img key={i} src={src} alt={`slide-${i}`} className="carousel-slide" />
+            <img key={i} src={src} alt={`slide-${i}`} className="carousel-slide" loading="lazy"/>
           ))}
         </div>
       </div>
@@ -63,7 +67,7 @@ function Home() {
           <div className="featured-grid">
             {topRated?.map((item) => (
               <div className="featured-card" key={item.id}>
-                <img src={item.thumbnail} alt={item.title} />
+                <img src={item.thumbnail} alt={item.title} loading="lazy"/>
                 <h3>{item.title}</h3>
                 <p>★ {(item.rating).toFixed(1)} — ${item.price.toFixed(2)}</p>
               </div>

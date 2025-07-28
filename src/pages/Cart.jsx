@@ -1,23 +1,62 @@
 import { useDispatch, useSelector } from 'react-redux'
 import CartItem from '../components/CartItem'
-import { Link } from 'react-router-dom'
-import { clearCart } from '../utils/cartSlice'
+import { Link, Navigate } from 'react-router-dom'
+import { clearCart, setCart } from '../utils/cartSlice'
 import { useEffect } from 'react'
+import toast from 'react-hot-toast'
 
 function Cart() {
   useEffect(() => {
     window.scroll(0, 0)
   }, [])
+
+  useEffect(() => {
+    document.title = `Cart | ShoppyGlobe`
+  }, [])
+
   // getting array of items already in items of cart state of redux
   const cartItems = useSelector(store => store.cart.items)
   const dispatch = useDispatch()
-
+  const token = useSelector(state => state.user.token)
   // handling clear cart
-  function handleClearCart() {
-    if (window.confirm("Are you sure?")) {
-      dispatch(clearCart())
+  async function handleClearCart() {
+    if (window.confirm("Are you sure you want to remove all items?")) {
+      try {
+        const res = await fetch("http://localhost:5000/api/cartclear", {
+          method: "DELETE",
+          headers: {
+            "Content-type": "application/json",
+            "authorization": `Bearer ${token}`
+          }
+        })
+        const data = await res.json()
+        dispatch(clearCart())
+        toast.success(data.message)
+      } catch (error) {
+        toast.error("Error occurred while clearing cart")
+        console.error("Error while clearing cart:", error)
+      }
     }
   }
+
+  if (!token) {
+    toast("Looks like you are not logged in, please login first.")
+    return <Navigate to="/login"></Navigate>
+  }
+  useEffect(() => {
+    async function fetchCartItems() {
+      const res = await fetch("http://localhost:5000/api/cart", {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+          "authorization": `Bearer ${token}`
+        }
+      })
+      const data = await res.json()
+      dispatch(setCart(data.cartItems))
+    }
+    fetchCartItems()
+  }, [])
 
   // rendering
   return (
@@ -33,7 +72,7 @@ function Cart() {
           <>
             <h1 className="cart-heading">My Cart</h1>
             {cartItems.map(item => (
-              <CartItem item={item} key={item.id} />
+              <CartItem item={item} key={item._id} />
             ))}
             <div className="cart-action-btns">
               <button onClick={handleClearCart} className="clear-cart-btn">Clear Cart</button>

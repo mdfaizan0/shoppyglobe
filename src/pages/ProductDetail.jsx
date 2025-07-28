@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { addItem, decreaseQuantity, increaseQuantity } from '../utils/cartSlice'
+import { addItem, removeItem, updateSingleItem } from '../utils/cartSlice'
 import Counter from '../components/Counter'
+import toast from 'react-hot-toast'
 
 function ProductDetail() {
   useEffect(() => {
@@ -17,14 +18,15 @@ function ProductDetail() {
   const dispatch = useDispatch()
   const cartItems = useSelector(state => state.cart.items)
   // finding the item with same id from cart state
-  const cartItem = cartItems.find(item => item.id === Number(id))
+  const cartItem = cartItems.find(item => item.productId === Number(id))
   const navigate = useNavigate()
+  const token = useSelector(state => state.user.token)
 
   // calling the API using custom hook to get details about the item and re-renders when id is changed
   useEffect(() => {
     async function fetchProductDetails() {
       try {
-        const resp = await fetch(`https://dummyjson.com/products/${id}`)
+        const resp = await fetch(`http://localhost:5000/api/product/${id}`)
         const json = await resp.json()
         // if API fails, fallback to NotFound component (/404) as API error does not fall under React Router error boundary
         if (!resp.ok) navigate("/404", { replace: true, state: { from: window.location.pathname, status: 404, message: `Product with id ${id} not found` } })
@@ -41,25 +43,99 @@ function ProductDetail() {
   // destructuring relevant properties
   const { title, description, price, rating, returnPolicy, stock, thumbnail, brand } = product
 
+  useEffect(() => {
+    document.title = `${title} | ShoppyGlobe`
+  }, [title])
+
   // dispatching action to items by using addItem action
-  function handleAddToCart() {
-    dispatch(addItem({ title, thumbnail, price, id: Number(id) }))
+  async function handleAddToCart() {
+    if (!token) {
+      toast("Looks like you are not logged in, please login first.")
+      navigate("/login")
+      return
+    }
+    try {
+      const res = await fetch("http://localhost:5000/api/cart", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          "authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ title, thumbnail, price, productId: id, quantity: 1 })
+      })
+      const data = await res.json()
+      if (res.status === 201) {
+        toast.success(`${title} added to cart`)
+        dispatch(addItem({ ...data.newItem }))
+      } else if (res.status === 200 && data.updatedItem) {
+        dispatch(updateSingleItem(data.updatedItem))
+      }
+    } catch (error) {
+      toast.error("Error occured while adding item to cart")
+      console.error("Error occured while adding item to cart:", error)
+    }
+  }
+
+  // handling remove from cart
+  async function handleRemoveFromCart() {
+    const confirmRemove = window.confirm("You want to remove the item from cart?")
+    if (!confirmRemove) return
+    try {
+      await fetch(`http://localhost:5000/api/cart/${cartItem._id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-type": "application/json",
+          "authorization": `Bearer ${token}`
+        }
+      })
+      dispatch(removeItem(cartItem._id))
+      toast.success(`${title} removed from cart`)
+    } catch (error) {
+      toast.error("Error occured while deleting.")
+      console.error("Error occured while deleting:", error)
+    }
   }
 
   // dispatching descrease quantity action to relevant action after confirming before quantity is zero 
-  function handleDecreaseQuantity() {
-    if (cartItem.quantity > 1) {
-      dispatch(decreaseQuantity(cartItem.id))
+  async function handleDecreaseQuantity() {
+    if (cartItem.quantity === 1) {
+      handleRemoveFromCart()
     } else {
-      if (window.confirm("Do you want to remove the item from cart?")) {
-        dispatch(decreaseQuantity(cartItem.id))
+      try {
+        const res = await fetch(`http://localhost:5000/api/cart/${cartItem._id}`, {
+          method: "PUT",
+          headers: {
+            "Content-type": "application/json",
+            "authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ action: "decrease" })
+        })
+        const data = await res.json()
+        dispatch(updateSingleItem(data.cartItem))
+      } catch (error) {
+        toast.error("Error occured while decreasing quantity")
+        console.error("Error occured:", error)
       }
     }
   }
 
   // disptaching action to increase number of quantity
-  function handleIncreaseQuantity() {
-    dispatch(increaseQuantity(cartItem.id))
+  async function handleIncreaseQuantity() {
+    try {
+      const res = await fetch(`http://localhost:5000/api/cart/${cartItem._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-type": "application/json",
+          "authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ action: "increase" })
+      })
+      const data = await res.json()
+      dispatch(updateSingleItem(data.cartItem))
+    } catch (error) {
+      toast.error("Error occured while increasing quantity")
+      console.error("Error occured:", error)
+    }
   }
 
   // rendering
@@ -72,15 +148,14 @@ function ProductDetail() {
           <Link to="/products/all" className="back-to-shop">←Back to Shop</Link>
         </div>
         <div className="product-details">
-          <img src={thumbnail} alt={title} />
+          <img src={thumbnail} alt={title} loading="lazy" />
           <h1>{title}</h1>
           {brand && <p className="brand">{brand}</p>}
           <p>{description}</p>
           <h3>${price?.toFixed(2)}</h3>
           <h4>★ {rating}</h4>
           <p>{returnPolicy || "30-Day Return Available"}</p>
-          <p className="stock-warning">Only {stock} remaining, buy now!</p>
-
+          {stock < 10 && <p className="stock-warning">Only {stock} remaining, buy now!</p>}
           {!cartItem ? (
             <button onClick={handleAddToCart}>Add to Cart</button>
           ) : (
