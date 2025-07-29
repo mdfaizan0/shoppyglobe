@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
 function About() {
+  // scrolling to the top on every re-render
   useEffect(() => {
     document.title = `About | ShoppyGlobe`
   }, [])

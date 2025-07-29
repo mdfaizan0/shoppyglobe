@@ -1,4 +1,5 @@
 // Github — https://github.com/mdfaizan0/shoppyglobe
+// Deployed - https://shoppyglobe-frontend.onrender.com/
 
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
@@ -47,6 +48,7 @@ const appRouter = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   // providing redux store access to whole app
   <Provider store={appStore}>
+    {/* setting toaster base stylings */}
     <Toaster
       position="top-right"
       reverseOrder={false}

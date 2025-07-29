@@ -5,6 +5,7 @@ import { Link, Navigate } from "react-router-dom"
 import { ENDPOINTS } from "../utils/config"
 
 function ThankYou() {
+  // setting state wrt if orderplaced is true
   const [isOrderPlaced, setIsOrderPlaced] = useState(() => {
     return sessionStorage.getItem("orderPlaced") === "true"
   })
@@ -13,9 +14,11 @@ function ThankYou() {
   const [loading, setLoading] = useState(true)
   const token = useSelector(state => state.user.token)
 
+  // fetching latest order details
   useEffect(() => {
     async function fetchOrderDetail() {
       try {
+        // calling backend to get latest order details
         const res = await fetch(ENDPOINTS.ORDER_LATEST, {
           method: "GET",
           headers: {
@@ -25,21 +28,26 @@ function ThankYou() {
         })
 
         const data = await res.json()
+        // setting order details state
         setOrderDetails(data.latestItem)
+        // if any error, show on toast and as well as on console
       } catch (error) {
         toast.error("Error while fetching recent order")
         console.error("Error while fetching recent order:", error)
+        // finally, set loading state to false and remove orderplaced from sessionstorage
       } finally {
         setLoading(false)
         sessionStorage.removeItem("orderPlaced")
       }
     }
 
+    // only execute the above function, if order placed
     if (isOrderPlaced) {
       fetchOrderDetail()
     }
   }, [isOrderPlaced, token])
 
+  // if order not placed, navigate to home
   if (!isOrderPlaced) {
     return <Navigate to="/" replace />
   }
@@ -59,7 +67,7 @@ function ThankYou() {
               {orderDetails?.orderItems?.map((item, index) => (
                 <div className="final-order-item" key={index}>
                   <div className="foi-img">
-                    <img src={item.thumbnail} alt={item.title} loading="lazy"/>
+                    <img src={item.thumbnail} alt={item.title} loading="lazy" />
                   </div>
                   <div className="foi-details">
                     <h3>{item.title}</h3>
@@ -74,8 +82,10 @@ function ThankYou() {
           </>
         )}
       </div>
-
-      <Link to="/products/all" className="notfound-btn">Buy More!</Link>
+      <div className="ty-action">
+        <Link to="/products/all" className="notfound-btn">Buy More!</Link>
+        <Link to="/profile" className="notfound-btn">My Orders</Link>
+      </div>
     </div>
   )
 }

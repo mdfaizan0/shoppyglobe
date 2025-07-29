@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
 
+// creating order child schema to hold main info
 const orderChildSchema = ({
     productId: {
         type: Number,
@@ -23,6 +24,7 @@ const orderChildSchema = ({
     }
 })
 
+// creating orderSchema to hold meta info
 const orderSchema = mongoose.Schema({
     createdAt: {
         type: Number,
@@ -36,6 +38,7 @@ const orderSchema = mongoose.Schema({
         type: Number,
         required: true
     },
+    // adding child schema
     orderItems: {
         type: Array,
         required: true,
@@ -43,6 +46,7 @@ const orderSchema = mongoose.Schema({
     }
 })
 
+// creating Order model with orderSchema and exporting
 const Order = mongoose.model("Order", orderSchema)
 
 export default Order

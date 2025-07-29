@@ -19,20 +19,22 @@ function Signup() {
   const dispatch = useDispatch()
   const token = useSelector(state => state.user.token)
 
+  // if token exist, navigate to UserProfile page
   if (token) {
     return <Navigate to="/profile"></Navigate>
   }
 
-
   // handling submit behavior of signup form
   async function handleSubmit(e) {
     e.preventDefault()
+    // // validating if name, email and password given
     if (!name || !email || !password) {
       toast("Please fill all fields")
       return
     }
 
     try {
+      // if all fields filled, calling backend with fields information
       const res = await fetch(ENDPOINTS.REGISTER, {
         method: "POST",
         headers: {
@@ -41,17 +43,24 @@ function Signup() {
         body: JSON.stringify({ name, email, password })
       })
       const data = await res.json()
+      /**
+       * if response status is 201:
+       * setting the token in user state of redux, 
+       * submitted state to true, 
+       * navigating to "/profile"
+       * showing custom toast message
+       */
       if (res.status === 201) {
         dispatch(setToken(data.token))
         setSubmitted(true)
-        setTimeout(() => {
-          navigate("/profile")
-        }, 2000);
+        navigate("/profile")
         toast.success(`Hello ${name.split(" ")[0]}, welcome to the family`, { icon: "👋🏻" })
+        // if response status is 409, show backend given message and navigate to login
       } else if (res.status === 409) {
         toast.error(data.message)
         navigate("/login")
       }
+      // if any error, show on toast and as well as on console
     } catch (error) {
       toast.error("Something went wrong. Please try again.")
       console.error(error)

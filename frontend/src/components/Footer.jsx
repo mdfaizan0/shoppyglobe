@@ -4,8 +4,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 
 function Footer() {
+  // handling subcribed state to greet for subscribing
   const [subscribed, setSubscribed] = useState(false)
 
+  // handling subscription form submission and setting subscribed state to true
   function handleSubmit(e) {
     e.preventDefault()
     setSubscribed(true)

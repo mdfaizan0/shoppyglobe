@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
 
+// creating cartSchema with all the relevant properties needed
 const cartSchema = mongoose.Schema({
     productId: {
         type: Number,
@@ -27,6 +28,8 @@ const cartSchema = mongoose.Schema({
     }
 })
 
+// creating Cart model with cartSchema and exporting
 const Cart = mongoose.model("Cart", cartSchema)
 
 export default Cart
+

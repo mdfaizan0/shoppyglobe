@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { ENDPOINTS } from "../utils/config";
 
 function UserProfile() {
+    // setting relevant states, getting redux states and setting dispatch/navigate
     const [isLoggedIn, setIsLoggedIn] = useState()
     const [loading, setLoading] = useState(true)
     const [orderHistory, setOrderHistory] = useState({})
@@ -16,37 +17,40 @@ function UserProfile() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        document.title = `${user?.name} | Profile`
-    }, [user])
-
-    useEffect(() => {
+        // if there is no token, navigate to "/login"
         if (!token) {
             navigate("/login");
             return;
         }
+        // if token exist, fetching user profile from getProfile utility function by sending token with it
         const fetchUser = async () => {
             const result = await getProfile(token);
 
+            // if any error: show toast, trigger logout action from redux and navigate to "/login"
             if (!result) {
                 toast.error("Something went wrong.");
                 dispatch(logout());
                 navigate("/login");
+                // if getProfile returned with expired, show the same message as toast, trigger logout action from redux and navigate to "/login"
             } else if (result.expired) {
                 toast.error("Session expired. Please login again.");
                 dispatch(logout());
                 navigate("/login");
+                // else, set the user details in the user state of redux and set loggedin state as true
             } else {
                 dispatch(setUser(result.user));
                 setIsLoggedIn(true)
             }
         };
 
+        // only execute if there is no user retrieved from redux user state
         if (!user) fetchUser();
     }, [token, dispatch, navigate, user]);
 
     useEffect(() => {
         async function fetchOrderHistory() {
             try {
+                // fetching order history from backend
                 const res = await fetch(ENDPOINTS.ORDER_HISTORY, {
                     method: "GET",
                     headers: {
@@ -55,16 +59,24 @@ function UserProfile() {
                     }
                 })
                 const data = await res.json()
+                // setting order history details 
                 setOrderHistory(data.orderHistory)
             } catch (error) {
+                // if any error, show on toast and as well as on console
                 toast.error(data.message)
                 console.error(error)
             } finally {
+                // finally, set loading state to false
                 setLoading(false)
             }
         }
         fetchOrderHistory()
     }, [isLoggedIn])
+
+    // only update the document title when user.name is received as not "undefined"
+    useEffect(() => {
+        if (user?.name) document.title = `${user?.name} | Profile`
+    }, [user?.name])
 
     return (
         <div className="user-profile">

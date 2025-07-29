@@ -404,6 +404,9 @@ body,
     background-color: #ffffff;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .checkout-nav-links a {
@@ -1338,7 +1341,6 @@ body,
 }
 
 .go-to-cart-btn {
-    margin-left: 12px;
     background-color: #28a745;
 }
 
@@ -1603,6 +1605,12 @@ body,
     text-align: right;
 }
 
+.ty-action {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+}
+
 @media screen and (max-width: 480px) {
     .carousel-slide {
         height: 200px;
@@ -1815,5 +1823,10 @@ body,
 
     .profile-name-logout>h1 {
         font-size: 6vw;
+    }
+    
+    .loading-container {
+        height: 100vh;
+        width: 100vw;
     }
 }

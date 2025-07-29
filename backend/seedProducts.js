@@ -4,7 +4,7 @@ import Product from "./models/Product"
 
 dotenv.config()
 
-
+// product data scraped from dummyJSON
 const products = [
     {
         "id": 1,

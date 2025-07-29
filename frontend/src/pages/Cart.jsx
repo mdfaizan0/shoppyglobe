@@ -7,22 +7,27 @@ import toast from 'react-hot-toast'
 import { ENDPOINTS } from '../utils/config'
 
 function Cart() {
+  // scrolling to the top on every re-render
   useEffect(() => {
     window.scroll(0, 0)
   }, [])
 
+  // setting relevant document title
   useEffect(() => {
     document.title = `Cart | ShoppyGlobe`
   }, [])
 
-  // getting array of items already in items of cart state of redux
+  // getting array of items and token already in redux state
   const cartItems = useSelector(store => store.cart.items)
   const dispatch = useDispatch()
   const token = useSelector(state => state.user.token)
+  
   // handling clear cart
   async function handleClearCart() {
+    // confirming if clear cart
     if (window.confirm("Are you sure you want to remove all items?")) {
       try {
+        // if yes, call backend and remove items
         const res = await fetch(ENDPOINTS.CLEAR_CART, {
           method: "DELETE",
           headers: {
@@ -31,8 +36,10 @@ function Cart() {
           }
         })
         const data = await res.json()
+        // after backend clear, call clearCart redux action with toast message
         dispatch(clearCart())
         toast.success(data.message)
+        // if any error, show error on toast as well as on console
       } catch (error) {
         toast.error("Error occurred while clearing cart")
         console.error("Error while clearing cart:", error)
@@ -40,10 +47,13 @@ function Cart() {
     }
   }
 
+  // only allow user to visit this page, if they are logged in
   if (!token) {
     toast("Looks like you are not logged in, please login first.")
     return <Navigate to="/login"></Navigate>
   }
+
+  // if logged in, proceed to fetch their cartitems
   useEffect(() => {
     async function fetchCartItems() {
       const res = await fetch(ENDPOINTS.CART, {
@@ -54,6 +64,7 @@ function Cart() {
         }
       })
       const data = await res.json()
+      // setting cart state with redux setCart action
       dispatch(setCart(data.cartItems))
     }
     fetchCartItems()

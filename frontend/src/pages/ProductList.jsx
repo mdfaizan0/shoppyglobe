@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import { ENDPOINTS } from '../utils/config'
 
 function ProductList() {
+  // setting relevant document title
   useEffect(() => {
     document.title = `Shop | ShoppyGlobe`
   }, [])

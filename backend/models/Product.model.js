@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// creating productSchema with all the relevant properties needed
 const productSchema = mongoose.Schema({
     id: {
         type: Number,
@@ -46,6 +47,7 @@ const productSchema = mongoose.Schema({
     }
 })
 
+// creating Product model with productSchema and exporting
 const Product = mongoose.model("Product", productSchema)
 
 export default Product

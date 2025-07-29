@@ -1,6 +1,7 @@
 import { protect } from "../middleware/auth.middleware.js"
 import { addToCart, clearCart, getAllCartItems, removeCartItem, updateCartItem } from "../controllers/cart.controller.js"
 
+// handling func-based route injection with specified routes, middleware and their controller functions
 export function cartRoutes(app) {
     app.post("/api/cart", protect, addToCart)
     app.get("/api/cart", protect, getAllCartItems)
