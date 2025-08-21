@@ -114,7 +114,7 @@ Create a `.env` file in the `backend/` directory and add the following:
 
 ```bash
 PORT=5000
-MONGO_URI="mongodb+srv://readonly-user:***REMOVED***@cluster0.pgouczg.mongodb.net/"
+MONGO_URI="your-mongodb-URI-for-vscode"
 JWT_SECRET="your_jwt_secret_key"
 FRONTEND_ORIGIN="http://localhost:5173"
 ```
